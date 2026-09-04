@@ -1,26 +1,22 @@
-import React, { useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useData } from "../context/DataContext";
 import {
-  ShieldCheck,
-  Search,
   Bell,
   User,
   LogOut,
   Hexagon,
   Building2,
-  UserCheck,
   ShoppingBag,
   Menu,
-  X,
+  BookOpen,
+  Route,
 } from "lucide-react";
 
 export const Header = ({ toggleMobileSidebar }) => {
   const { user, logout, switchRole } = useAuth();
   const { alerts } = useData();
-  const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
   const location = useLocation();
 
   const unreadAlertsCount = alerts.filter((a) => !a.read).length;
@@ -31,12 +27,13 @@ export const Header = ({ toggleMobileSidebar }) => {
 
   const showUserActions = user && !isPublicPage;
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/verify?batchId=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
+  const handleSectionNavigation = (event, sectionId) => {
+    if (location.pathname !== "/") {
+      return;
     }
+
+    event.preventDefault();
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -130,38 +127,23 @@ export const Header = ({ toggleMobileSidebar }) => {
           </Link>
         </div>
 
-        {/* Global Quick Batch Search Bar */}
-        <form
-          onSubmit={handleSearchSubmit}
-          className="hidden md:flex flex-1 max-w-md mx-4"
-        >
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search Batch ID (e.g. HC-AP-2026-0001)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-20 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
-            />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-            <button
-              type="submit"
-              className="absolute right-1 top-1 bottom-1 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 rounded-md transition-colors"
-            >
-              Verify
-            </button>
-          </div>
-        </form>
-
         {/* Right Nav Actions */}
         <div className="flex items-center gap-3">
-          {/* Public Verification Link */}
           <Link
-            to="/verify"
-            className="hidden lg:flex items-center gap-1.5 text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 px-3 py-1.5 rounded-lg transition-colors"
+            to="/#technology"
+            onClick={(event) => handleSectionNavigation(event, "technology")}
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 border border-slate-200 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50 px-2 sm:px-3 py-2 rounded-lg transition-colors"
           >
-            <ShieldCheck className="w-4 h-4 text-amber-600" />
-            <span>Public Verification</span>
+            <BookOpen className="w-4 h-4 text-amber-600" />
+            <span className="hidden sm:inline">technology</span>
+          </Link>
+          <Link
+            to="/#traceability"
+            onClick={(event) => handleSectionNavigation(event, "traceability")}
+            className="flex items-center gap-1.5 text-xs font-semibold bg-slate-900 text-white border border-slate-900 hover:bg-slate-800 px-2 sm:px-3 py-2 rounded-lg transition-colors"
+          >
+            <Route className="w-4 h-4 text-amber-400" />
+            <span className="hidden sm:inline">Traceability</span>
           </Link>
 
           {/* =========================================

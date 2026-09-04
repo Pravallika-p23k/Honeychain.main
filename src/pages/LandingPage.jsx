@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import heroImage from "../assets/hero.png";
 import {
@@ -16,11 +16,23 @@ import {
   Users,
   Search,
   Hexagon,
+  UserPlus,
 } from "lucide-react";
 
 export const LandingPage = () => {
   const [quickVerifyId, setQuickVerifyId] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const sectionId = window.location.hash.slice(1);
+    if (sectionId) {
+      requestAnimationFrame(() => {
+        document
+          .getElementById(sectionId)
+          ?.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  }, []);
 
   const handleQuickVerify = (e) => {
     e.preventDefault();
@@ -81,11 +93,11 @@ export const LandingPage = () => {
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
-                to="/verify"
+                to="/signup"
                 className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-3.5 rounded-xl border border-slate-700 transition-all flex items-center gap-2 text-base"
               >
-                <QrCode className="w-5 h-5 text-amber-400" />
-                Verify Honey Batch
+                <UserPlus className="w-5 h-5 text-amber-400" />
+                Sign Up
               </Link>
             </div>
 
@@ -159,7 +171,10 @@ export const LandingPage = () => {
       </section>
 
       {/* Main Features Grid */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section
+        id="technology"
+        className="scroll-mt-28 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
         <div className="text-center max-w-3xl mx-auto mb-14">
           <span className="text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-100 px-3 py-1 rounded-full border border-amber-200">
             Core Technology Pillars
@@ -268,7 +283,10 @@ export const LandingPage = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-slate-900 text-white py-16">
+      <section
+        id="traceability"
+        className="scroll-mt-28 bg-slate-900 text-white py-16"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">
