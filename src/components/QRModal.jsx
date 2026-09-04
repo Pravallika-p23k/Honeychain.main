@@ -1,13 +1,19 @@
-import React from 'react';
-import { X, QrCode, Download, ExternalLink, ShieldCheck } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { X, QrCode, Download, ExternalLink, ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export const QRModal = ({ isOpen, onClose, batchId, title = "Honey Batch QR Certificate" }) => {
+export const QRModal = ({
+  isOpen,
+  onClose,
+  batchId,
+  title = "Honey Batch QR Certificate",
+}) => {
   const navigate = useNavigate();
   if (!isOpen || !batchId) return null;
 
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(batchId)}`;
-  const verifyUrl = `/verify?batchId=${batchId}`;
+  const verifyUrl = `/verify?batchId=${encodeURIComponent(batchId)}`;
+  const publicVerifyUrl = `${window.location.origin}${verifyUrl}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(publicVerifyUrl)}`;
 
   const handleVerifyClick = () => {
     onClose();
@@ -23,7 +29,7 @@ export const QRModal = ({ isOpen, onClose, batchId, title = "Honey Batch QR Cert
             <QrCode className="w-5 h-5 text-amber-400" />
             <h3 className="font-semibold text-base">{title}</h3>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="text-slate-400 hover:text-white transition-colors p-1 rounded-md hover:bg-slate-800"
           >
@@ -33,12 +39,14 @@ export const QRModal = ({ isOpen, onClose, batchId, title = "Honey Batch QR Cert
 
         {/* Content */}
         <div className="p-6 text-center">
-          <p className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">Government Batch Registry</p>
+          <p className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-2">
+            Government Batch Registry
+          </p>
           <p className="text-xl font-bold text-slate-900 mb-4">{batchId}</p>
 
           <div className="inline-block p-4 bg-amber-50 rounded-xl border-2 border-amber-200 shadow-inner mb-4">
-            <img 
-              src={qrUrl} 
+            <img
+              src={qrUrl}
               alt={`QR Code for ${batchId}`}
               className="w-48 h-48 mx-auto object-contain"
             />
@@ -51,14 +59,14 @@ export const QRModal = ({ isOpen, onClose, batchId, title = "Honey Batch QR Cert
 
           {/* Action buttons */}
           <div className="flex gap-3">
-            <button 
+            <button
               onClick={handleVerifyClick}
               className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-medium py-2.5 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2"
             >
               <ExternalLink className="w-4 h-4" />
-              Public Verification
+              Open Honey Journey
             </button>
-            <a 
+            <a
               href={qrUrl}
               download={`${batchId}-QR.png`}
               target="_blank"
@@ -72,7 +80,9 @@ export const QRModal = ({ isOpen, onClose, batchId, title = "Honey Batch QR Cert
         </div>
 
         <div className="bg-slate-50 px-5 py-3 text-center border-t border-slate-200">
-          <p className="text-xs text-slate-500">Scan using camera or Honey Chain Consumer Portal</p>
+          <p className="text-xs text-slate-500">
+            Scan using camera or Honey Chain Consumer Portal
+          </p>
         </div>
       </div>
     </div>
