@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-
+import profileImage from "../assets/profile.jpg";
 const AuthContext = createContext();
 
 const MOCK_USERS = {
@@ -14,7 +14,7 @@ const MOCK_USERS = {
     hivesCount: 12,
     regNo: "KVIC-RBH-2024-8841",
     phone: "+91 98765 43210",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80"
+    avatar: profileImage,
   },
   gov_officer: {
     id: "KVIC-GOV-904",

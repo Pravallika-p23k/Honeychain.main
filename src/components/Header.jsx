@@ -1,34 +1,41 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useData } from '../context/DataContext';
-import { 
-  ShieldCheck, 
-  Search, 
-  Bell, 
-  User, 
-  LogOut, 
+import React, { useState } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useData } from "../context/DataContext";
+import {
+  ShieldCheck,
+  Search,
+  Bell,
+  User,
+  LogOut,
   Hexagon,
   Building2,
   UserCheck,
   ShoppingBag,
   Menu,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
 export const Header = ({ toggleMobileSidebar }) => {
   const { user, logout, switchRole } = useAuth();
   const { alerts } = useData();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const unreadAlertsCount = alerts.filter(a => !a.read).length;
+  const unreadAlertsCount = alerts.filter((a) => !a.read).length;
+
+  // Alerts and profile should NOT appear on Home or Login pages
+  const isPublicPage =
+    location.pathname === "/" || location.pathname === "/login";
+
+  const showUserActions = user && !isPublicPage;
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/verify?batchId=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
+      setSearchQuery("");
     }
   };
 
@@ -157,46 +164,54 @@ export const Header = ({ toggleMobileSidebar }) => {
             <span>Public Verification</span>
           </Link>
 
-          {/* System Alerts Counter */}
-          <Link
-            to="/alerts"
-            className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-            title="System Alerts"
-          >
-            <Bell className="w-5 h-5" />
-            {unreadAlertsCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 bg-rose-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
-                {unreadAlertsCount}
-              </span>
-            )}
-          </Link>
-
-          {/* User Profile dropdown info */}
-          <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
-            <Link to="/profile" className="flex items-center gap-2 group">
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-8 h-8 rounded-full object-cover border-2 border-amber-500 group-hover:ring-2 group-hover:ring-amber-300 transition-all"
-              />
-              <div className="hidden xl:block text-left">
-                <p className="text-xs font-bold text-slate-900 group-hover:text-amber-700 leading-tight">
-                  {user.name}
-                </p>
-                <p className="text-[10px] text-slate-500 font-medium capitalize">
-                  {user.roleTitle}
-                </p>
-              </div>
-            </Link>
-
-            <button
-              onClick={logout}
-              className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors"
-              title="Logout"
+          {/* =========================================
+              SYSTEM ALERTS - ONLY AFTER LOGIN
+             ========================================= */}
+          {showUserActions && (
+            <Link
+              to="/alerts"
+              className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+              title="System Alerts"
             >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
+              <Bell className="w-5 h-5" />
+              {unreadAlertsCount > 0 && (
+                <span className="absolute top-1 right-1 w-4 h-4 bg-rose-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {unreadAlertsCount}
+                </span>
+              )}
+            </Link>
+          )}
+
+          {/* =========================================
+              USER PROFILE - ONLY AFTER LOGIN
+             ========================================= */}
+          {showUserActions && (
+            <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
+              <Link to="/profile" className="flex items-center gap-2 group">
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-8 h-8 rounded-full object-cover border-2 border-amber-500 group-hover:ring-2 group-hover:ring-amber-300 transition-all"
+                />
+                <div className="hidden xl:block text-left">
+                  <p className="text-xs font-bold text-slate-900 group-hover:text-amber-700 leading-tight">
+                    {user.name}
+                  </p>
+                  <p className="text-[10px] text-slate-500 font-medium capitalize">
+                    {user.roleTitle}
+                  </p>
+                </div>
+              </Link>
+
+              <button
+                onClick={logout}
+                className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>
