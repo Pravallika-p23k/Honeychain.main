@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { User, Building2, ShoppingBag, Award, ShieldCheck, Mail, Phone, MapPin, CheckCircle2 } from 'lucide-react';
 
 export const ProfilePage = () => {
-  const { user, switchRole } = useAuth();
+    const { user } = useAuth();
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -55,37 +55,6 @@ export const ProfilePage = () => {
           <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
             <span className="text-slate-500 block font-medium mb-1">Location / Jurisdiction:</span>
             <span className="text-sm font-bold text-slate-900 flex items-center gap-1.5"><MapPin className="w-4 h-4 text-amber-600"/> {user.location || user.jurisdiction}</span>
-          </div>
-        </div>
-
-        {/* Switch Role Quick Tester in Profile */}
-        <div className="p-5 bg-amber-50 rounded-xl border border-amber-200 text-xs space-y-3">
-          <p className="font-bold text-amber-950">Switch Active Portal Perspective (Prototype Demonstration):</p>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => switchRole('beekeeper')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
-                user.role === 'beekeeper' ? 'bg-amber-600 text-white shadow-xs' : 'bg-white border border-amber-300 text-amber-900'
-              }`}
-            >
-              Switch to Beekeeper Role
-            </button>
-            <button
-              onClick={() => switchRole('gov_officer')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
-                user.role === 'gov_officer' ? 'bg-blue-600 text-white shadow-xs' : 'bg-white border border-amber-300 text-amber-900'
-              }`}
-            >
-              Switch to KVIC Officer Role
-            </button>
-            <button
-              onClick={() => switchRole('buyer')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
-                user.role === 'buyer' ? 'bg-emerald-600 text-white shadow-xs' : 'bg-white border border-amber-300 text-amber-900'
-              }`}
-            >
-              Switch to Buyer Role
-            </button>
           </div>
         </div>
       </div>

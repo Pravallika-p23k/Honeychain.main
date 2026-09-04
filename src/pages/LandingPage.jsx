@@ -92,6 +92,7 @@ export const LandingPage = () => {
                 Access Portal Login
                 <ArrowRight className="w-5 h-5" />
               </Link>
+<<<<<<< HEAD
               <Link
                 to="/signup"
                 className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-3.5 rounded-xl border border-slate-700 transition-all flex items-center gap-2 text-base"
@@ -99,33 +100,11 @@ export const LandingPage = () => {
                 <UserPlus className="w-5 h-5 text-amber-400" />
                 Sign Up
               </Link>
+=======
+>>>>>>> 87c4876f9f7f45a51f795ce87f2bda85db3dcbba
             </div>
 
-            {/* Quick Verification Widget */}
-            <div className="bg-slate-900/90 p-4 sm:p-5 rounded-2xl border border-slate-800 backdrop-blur-md shadow-2xl">
-              <p className="text-xs font-semibold uppercase text-slate-400 tracking-wider mb-3 flex items-center gap-2">
-                <Search className="w-4 h-4 text-amber-400" />
-                Instant Consumer Honey Batch Lookup
-              </p>
-              <form
-                onSubmit={handleQuickVerify}
-                className="flex flex-col sm:flex-row gap-2"
-              >
-                <input
-                  type="text"
-                  placeholder="Enter Batch ID (Try: HC-AP-2026-0001 or HC-UP-2026-0084)"
-                  value={quickVerifyId}
-                  onChange={(e) => setQuickVerifyId(e.target.value)}
-                  className="flex-1 px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-                <button
-                  type="submit"
-                  className="bg-amber-600 hover:bg-amber-500 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
-                >
-                  Verify Now
-                </button>
-              </form>
-            </div>
+           
           </div>
         </div>
       </section>
