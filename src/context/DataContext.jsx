@@ -1,8 +1,12 @@
-import React, { createContext, useContext, useState } from 'react';
-import { generateTelemetryHistory } from '../services/iotService';
-import { INITIAL_BLOCKCHAIN_RECORDS, createMockTransaction } from '../services/blockchainService';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { generateTelemetryHistory } from "../services/iotService";
+import {
+  INITIAL_BLOCKCHAIN_RECORDS,
+  createMockTransaction,
+} from "../services/blockchainService";
 
 const DataContext = createContext();
+const BLOCKCHAIN_STORAGE_KEY = "honeychain-blockchain-logs";
 
 const INITIAL_HIVES = [
   {
@@ -23,9 +27,20 @@ const INITIAL_HIVES = [
     weightDrop24h: 0.1,
     telemetry: generateTelemetryHistory("HC-AP-017", 24),
     inspections: [
-      { date: "2026-08-27", inspector: "Ramesh Kumar", notes: "Strong brood pattern. 6 frames capped honey. No mites observed.", condition: "Excellent" },
-      { date: "2026-08-12", inspector: "Ramesh Kumar", notes: "Routine check. Added super frame.", condition: "Good" }
-    ]
+      {
+        date: "2026-08-27",
+        inspector: "Ramesh Kumar",
+        notes:
+          "Strong brood pattern. 6 frames capped honey. No mites observed.",
+        condition: "Excellent",
+      },
+      {
+        date: "2026-08-12",
+        inspector: "Ramesh Kumar",
+        notes: "Routine check. Added super frame.",
+        condition: "Good",
+      },
+    ],
   },
   {
     id: "HC-AP-018",
@@ -34,7 +49,7 @@ const INITIAL_HIVES = [
     colonyStatus: "ATTENTION_REQUIRED",
     healthScore: 68,
     temperature: 38.2, // Temp high alert!
-    humidity: 72,      // Humidity high alert!
+    humidity: 72, // Humidity high alert!
     weight: 39.5,
     activity: 62,
     battery: 78,
@@ -45,8 +60,13 @@ const INITIAL_HIVES = [
     weightDrop24h: 0.4,
     telemetry: generateTelemetryHistory("HC-AP-018", 24),
     inspections: [
-      { date: "2026-08-20", inspector: "Ramesh Kumar", notes: "Internal temperature elevated. Shade net recommended.", condition: "Fair" }
-    ]
+      {
+        date: "2026-08-20",
+        inspector: "Ramesh Kumar",
+        notes: "Internal temperature elevated. Shade net recommended.",
+        condition: "Fair",
+      },
+    ],
   },
   {
     id: "HC-AP-019",
@@ -66,8 +86,13 @@ const INITIAL_HIVES = [
     weightDrop24h: 0.0,
     telemetry: generateTelemetryHistory("HC-AP-019", 24),
     inspections: [
-      { date: "2026-08-29", inspector: "Ramesh Kumar", notes: "High nectar flow. Super frame 85% full.", condition: "Excellent" }
-    ]
+      {
+        date: "2026-08-29",
+        inspector: "Ramesh Kumar",
+        notes: "High nectar flow. Super frame 85% full.",
+        condition: "Excellent",
+      },
+    ],
   },
   {
     id: "HC-AP-020",
@@ -87,8 +112,13 @@ const INITIAL_HIVES = [
     weightDrop24h: 3.1, // Swarming weight drop!
     telemetry: generateTelemetryHistory("HC-AP-020", 24),
     inspections: [
-      { date: "2026-08-15", inspector: "Ramesh Kumar", notes: "Queen cells built. High swarming tendency.", condition: "Requires Action" }
-    ]
+      {
+        date: "2026-08-15",
+        inspector: "Ramesh Kumar",
+        notes: "Queen cells built. High swarming tendency.",
+        condition: "Requires Action",
+      },
+    ],
   },
   {
     id: "HC-UP-001",
@@ -107,7 +137,7 @@ const INITIAL_HIVES = [
     installationDate: "2025-01-20",
     weightDrop24h: 0.2,
     telemetry: generateTelemetryHistory("HC-UP-001", 24),
-    inspections: []
+    inspections: [],
   },
   {
     id: "HC-KA-104",
@@ -126,8 +156,8 @@ const INITIAL_HIVES = [
     installationDate: "2025-03-01",
     weightDrop24h: 0.0,
     telemetry: generateTelemetryHistory("HC-KA-104", 24),
-    inspections: []
-  }
+    inspections: [],
+  },
 ];
 
 const INITIAL_BATCHES = [
@@ -150,7 +180,8 @@ const INITIAL_BATCHES = [
     moistureContent: "17.2%",
     hmfPpm: "12 mg/kg",
     c4SugarTest: "Passed (<7% negative)",
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=HC-AP-2026-0001",
+    qrCodeUrl:
+      "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=HC-AP-2026-0001",
     pricePerKg: 650,
     isListedOnMarketplace: true,
   },
@@ -173,7 +204,8 @@ const INITIAL_BATCHES = [
     moistureContent: "16.8%",
     hmfPpm: "14 mg/kg",
     c4SugarTest: "Passed",
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=HC-UP-2026-0084",
+    qrCodeUrl:
+      "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=HC-UP-2026-0084",
     pricePerKg: 720,
     isListedOnMarketplace: true,
   },
@@ -196,10 +228,11 @@ const INITIAL_BATCHES = [
     moistureContent: "Pending Lab",
     hmfPpm: "Pending",
     c4SugarTest: "In Progress",
-    qrCodeUrl: "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=HC-AP-2026-0002",
+    qrCodeUrl:
+      "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=HC-AP-2026-0002",
     pricePerKg: 580,
     isListedOnMarketplace: false,
-  }
+  },
 ];
 
 const INITIAL_ALERTS = [
@@ -209,9 +242,10 @@ const INITIAL_ALERTS = [
     title: "High Temperature & Humidity Alert",
     type: "TEMP_HUMIDITY_HIGH",
     severity: "WARNING",
-    message: "Hive HC-AP-018 registered 38.2°C and 72% humidity. Microclimate heat stress risk.",
+    message:
+      "Hive HC-AP-018 registered 38.2°C and 72% humidity. Microclimate heat stress risk.",
     timestamp: "2026-09-01 08:15:00",
-    read: false
+    read: false,
   },
   {
     id: "ALT-2026-102",
@@ -219,9 +253,10 @@ const INITIAL_ALERTS = [
     title: "Sudden Weight Drop - Possible Swarming",
     type: "SWARMING_WEIGHT_DROP",
     severity: "CRITICAL",
-    message: "Hive HC-AP-020 dropped 3.1kg in weight over 24h. Possible queen swarming event.",
+    message:
+      "Hive HC-AP-020 dropped 3.1kg in weight over 24h. Possible queen swarming event.",
     timestamp: "2026-08-31 16:40:00",
-    read: false
+    read: false,
   },
   {
     id: "ALT-2026-103",
@@ -229,17 +264,37 @@ const INITIAL_ALERTS = [
     title: "Lab Testing Pending Verification",
     type: "QUALITY_AUDIT",
     severity: "INFO",
-    message: "Harvest Batch HC-AP-2026-0002 submitted to KVIC testing lab for Purity & C4 sugar test.",
+    message:
+      "Harvest Batch HC-AP-2026-0002 submitted to KVIC testing lab for Purity & C4 sugar test.",
     timestamp: "2026-08-31 10:00:00",
-    read: true
-  }
+    read: true,
+  },
 ];
 
 export const DataProvider = ({ children }) => {
   const [hives, setHives] = useState(INITIAL_HIVES);
   const [batches, setBatches] = useState(INITIAL_BATCHES);
   const [alerts, setAlerts] = useState(INITIAL_ALERTS);
-  const [blockchainLogs, setBlockchainLogs] = useState(INITIAL_BLOCKCHAIN_RECORDS);
+  const [blockchainLogs, setBlockchainLogs] = useState(() => {
+    const savedLogs = localStorage.getItem(BLOCKCHAIN_STORAGE_KEY);
+
+    if (!savedLogs) {
+      return INITIAL_BLOCKCHAIN_RECORDS;
+    }
+
+    try {
+      return JSON.parse(savedLogs);
+    } catch {
+      return INITIAL_BLOCKCHAIN_RECORDS;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      BLOCKCHAIN_STORAGE_KEY,
+      JSON.stringify(blockchainLogs),
+    );
+  }, [blockchainLogs]);
 
   // Add new Hive
   const addHive = (newHiveData) => {
@@ -257,10 +312,10 @@ export const DataProvider = ({ children }) => {
       battery: 100,
       beeSpecies: newHiveData.beeSpecies || "Apis cerana indica",
       queenInfo: newHiveData.queenInfo || "Queen #Q-2026-NEW",
-      lastInspection: new Date().toISOString().split('T')[0],
-      installationDate: new Date().toISOString().split('T')[0],
+      lastInspection: new Date().toISOString().split("T")[0],
+      installationDate: new Date().toISOString().split("T")[0],
       telemetry: generateTelemetryHistory(id, 24),
-      inspections: []
+      inspections: [],
     };
     setHives([newHive, ...hives]);
     return newHive;
@@ -268,16 +323,19 @@ export const DataProvider = ({ children }) => {
 
   // Add new Harvest (creates batch & blockchain log)
   const addHarvest = (harvestForm) => {
-    const seq = (batches.length + 1).toString().padStart(4, '0');
+    const seq = (batches.length + 1).toString().padStart(4, "0");
     const batchId = `HC-AP-2026-${seq}`;
 
     const newBatch = {
       batchId,
-      sourceHives: Array.isArray(harvestForm.hiveId) ? harvestForm.hiveId : [harvestForm.hiveId],
+      sourceHives: Array.isArray(harvestForm.hiveId)
+        ? harvestForm.hiveId
+        : [harvestForm.hiveId],
       beekeeperId: "RBH-4821",
       beekeeperName: harvestForm.collector || "Ramesh Kumar",
       cluster: "Andhra Pradesh - Chittoor Cluster",
-      harvestDate: harvestForm.harvestDate || new Date().toISOString().split('T')[0],
+      harvestDate:
+        harvestForm.harvestDate || new Date().toISOString().split("T")[0],
       quantityKg: Number(harvestForm.quantityKg),
       floralSource: harvestForm.floralSource,
       location: harvestForm.location || "Madanapalle, Chittoor, AP",
@@ -301,76 +359,87 @@ export const DataProvider = ({ children }) => {
     const tx = createMockTransaction(
       "BATCH_HARVEST_LOGGED",
       batchId,
-      `Beekeeper #${harvestForm.collector || 'Ramesh Kumar'}`,
+      `Beekeeper #${harvestForm.collector || "Ramesh Kumar"}`,
       {
         harvestWeightKg: Number(harvestForm.quantityKg),
         floralSource: harvestForm.floralSource,
-        sourceHives: newBatch.sourceHives
-      }
+        sourceHives: newBatch.sourceHives,
+      },
     );
-    setBlockchainLogs([tx, ...blockchainLogs]);
+    setBlockchainLogs((prevLogs) => [tx, ...prevLogs]);
 
     return batchId;
   };
 
   // Update Batch Status (e.g. Gov Officer approves lab test)
   const updateBatchQuality = (batchId, qualityStatus, labResults = {}) => {
-    setBatches(prev => prev.map(b => {
-      if (b.batchId === batchId) {
-        return {
-          ...b,
-          qualityStatus,
-          purityScore: labResults.purityScore || "99.2%",
-          moistureContent: labResults.moistureContent || "17.4%",
-          hmfPpm: labResults.hmfPpm || "10 mg/kg",
-          c4SugarTest: labResults.c4SugarTest || "Passed Negative",
-          processingStatus: qualityStatus === "PASSED_KVIC_TEST" ? "PACKAGED" : b.processingStatus,
-        };
-      }
-      return b;
-    }));
+    setBatches((prev) =>
+      prev.map((b) => {
+        if (b.batchId === batchId) {
+          return {
+            ...b,
+            qualityStatus,
+            purityScore: labResults.purityScore || "99.2%",
+            moistureContent: labResults.moistureContent || "17.4%",
+            hmfPpm: labResults.hmfPpm || "10 mg/kg",
+            c4SugarTest: labResults.c4SugarTest || "Passed Negative",
+            processingStatus:
+              qualityStatus === "PASSED_KVIC_TEST"
+                ? "PACKAGED"
+                : b.processingStatus,
+          };
+        }
+        return b;
+      }),
+    );
 
     // Add blockchain verification event
     const tx = createMockTransaction(
-      qualityStatus === "PASSED_KVIC_TEST" ? "QUALITY_VERIFICATION_PASSED" : "QUALITY_VERIFICATION_FAILED",
+      qualityStatus === "PASSED_KVIC_TEST"
+        ? "QUALITY_VERIFICATION_PASSED"
+        : "QUALITY_VERIFICATION_FAILED",
       batchId,
       "KVIC Quality Inspector #GOV-904",
-      labResults
+      labResults,
     );
-    setBlockchainLogs([tx, ...blockchainLogs]);
+    setBlockchainLogs((prevLogs) => [tx, ...prevLogs]);
   };
 
   // Toggle Marketplace Listing
   const toggleMarketplaceListing = (batchId, price) => {
-    setBatches(prev => prev.map(b => {
-      if (b.batchId === batchId) {
-        return {
-          ...b,
-          isListedOnMarketplace: !b.isListedOnMarketplace,
-          pricePerKg: price || b.pricePerKg
-        };
-      }
-      return b;
-    }));
+    setBatches((prev) =>
+      prev.map((b) => {
+        if (b.batchId === batchId) {
+          return {
+            ...b,
+            isListedOnMarketplace: !b.isListedOnMarketplace,
+            pricePerKg: price || b.pricePerKg,
+          };
+        }
+        return b;
+      }),
+    );
   };
 
   // Dismiss Alert
   const dismissAlert = (alertId) => {
-    setAlerts(prev => prev.filter(a => a.id !== alertId));
+    setAlerts((prev) => prev.filter((a) => a.id !== alertId));
   };
 
   return (
-    <DataContext.Provider value={{
-      hives,
-      batches,
-      alerts,
-      blockchainLogs,
-      addHive,
-      addHarvest,
-      updateBatchQuality,
-      toggleMarketplaceListing,
-      dismissAlert
-    }}>
+    <DataContext.Provider
+      value={{
+        hives,
+        batches,
+        alerts,
+        blockchainLogs,
+        addHive,
+        addHarvest,
+        updateBatchQuality,
+        toggleMarketplaceListing,
+        dismissAlert,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );
@@ -379,7 +448,7 @@ export const DataProvider = ({ children }) => {
 export const useData = () => {
   const context = useContext(DataContext);
   if (!context) {
-    throw new Error('useData must be used within a DataProvider');
+    throw new Error("useData must be used within a DataProvider");
   }
   return context;
 };
