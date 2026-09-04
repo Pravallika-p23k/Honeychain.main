@@ -17,11 +17,12 @@ import {
 } from "lucide-react";
 
 export const Header = ({ toggleMobileSidebar }) => {
-  const { user, logout, switchRole } = useAuth();
+const { user, logout } = useAuth();
   const { alerts } = useData();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
   const unreadAlertsCount = alerts.filter((a) => !a.read).length;
 
@@ -43,58 +44,7 @@ export const Header = ({ toggleMobileSidebar }) => {
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-xs">
       <div className="tricolor-bar"></div>
 
-      {/* Government Identity Top Banner */}
-      <div className="bg-slate-950 text-slate-200 px-4 py-1.5 text-xs flex flex-wrap items-center justify-between gap-2 border-b border-slate-800">
-        <div className="flex items-center gap-2 font-medium">
-          <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded text-[10px] font-semibold border border-amber-500/30 uppercase tracking-wider">
-            Government of India | KVIC
-          </span>
-          <span className="hidden sm:inline text-slate-400">|</span>
-          <span className="hidden sm:inline text-slate-300">
-            Khadi & Village Industries Commission Honey Traceability Platform
-          </span>
-        </div>
-
-        {/* Top Role Quick Switcher for Easy Demonstration */}
-        <div className="flex items-center gap-1.5 bg-slate-900 px-2 py-1 rounded border border-slate-800">
-          <span className="text-[11px] text-slate-400 font-semibold mr-1 hidden md:inline">
-            Test Role:
-          </span>
-          <button
-            onClick={() => switchRole("beekeeper")}
-            className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
-              user.role === "beekeeper"
-                ? "bg-amber-600 text-white font-semibold"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            <User className="w-3 h-3" />
-            Beekeeper
-          </button>
-          <button
-            onClick={() => switchRole("gov_officer")}
-            className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
-              user.role === "gov_officer"
-                ? "bg-blue-600 text-white font-semibold"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            <Building2 className="w-3 h-3" />
-            KVIC Officer
-          </button>
-          <button
-            onClick={() => switchRole("buyer")}
-            className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors flex items-center gap-1 ${
-              user.role === "buyer"
-                ? "bg-emerald-600 text-white font-semibold"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            <ShoppingBag className="w-3 h-3" />
-            Buyer
-          </button>
-        </div>
-      </div>
+     
 
       {/* Main Header Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
@@ -131,27 +81,31 @@ export const Header = ({ toggleMobileSidebar }) => {
         </div>
 
         {/* Global Quick Batch Search Bar */}
-        <form
-          onSubmit={handleSearchSubmit}
-          className="hidden md:flex flex-1 max-w-md mx-4"
-        >
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search Batch ID (e.g. HC-AP-2026-0001)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-20 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
-            />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-            <button
-              type="submit"
-              className="absolute right-1 top-1 bottom-1 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 rounded-md transition-colors"
-            >
-              Verify
-            </button>
-          </div>
-        </form>
+        {!isHomePage && (
+          <form
+            onSubmit={handleSearchSubmit}
+            className="hidden md:flex flex-1 max-w-md mx-4"
+          >
+            <div className="relative w-full">
+              <input
+                type="text"
+                placeholder="Search Batch ID (e.g. HC-AP-2026-0001)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-20 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+              />
+
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+
+              <button
+                type="submit"
+                className="absolute right-1 top-1 bottom-1 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 rounded-md transition-colors"
+              >
+                Verify
+              </button>
+            </div>
+          </form>
+        )}
 
         {/* Right Nav Actions */}
         <div className="flex items-center gap-3">
