@@ -1,14 +1,32 @@
-import React, { useState } from 'react';
-import { useData } from '../context/DataContext';
-import { StatusBadge } from '../components/StatusBadge';
-import { Link } from 'react-router-dom';
-import { Bell, AlertTriangle, CheckCircle2, ShieldAlert, Trash2, ArrowRight } from 'lucide-react';
+import React, { useState } from "react";
+import { useData } from "../context/DataContext";
+import { useAuth } from "../context/AuthContext";
+import { StatusBadge } from "../components/StatusBadge";
+import { Link } from "react-router-dom";
+import {
+  Bell,
+  AlertTriangle,
+  ShieldAlert,
+  Trash2,
+  ArrowRight,
+} from "lucide-react";
 
 export const AlertsPage = () => {
   const { alerts, dismissAlert } = useData();
-  const [filterSeverity, setFilterSeverity] = useState('ALL');
+  const { user } = useAuth();
 
-  const filteredAlerts = alerts.filter(a => filterSeverity === 'ALL' || a.severity === filterSeverity);
+  const [filterSeverity, setFilterSeverity] = useState("ALL");
+
+  // ==========================================
+  // KVIC OFFICER
+  // Do not show alerts on KVIC Officer page
+  // ==========================================
+const visibleAlerts =
+  user?.role === "gov_officer" || user?.role === "buyer" ? [] : alerts;
+
+  const filteredAlerts = visibleAlerts.filter(
+    (a) => filterSeverity === "ALL" || a.severity === filterSeverity,
+  );
 
   return (
     <div className="space-y-6">
@@ -19,34 +37,48 @@ export const AlertsPage = () => {
             <Bell className="w-7 h-7 text-rose-600" />
             System Anomaly & Risk Alerts
           </h1>
-          <p className="text-xs text-slate-500 mt-1">Automated notifications for microclimate spikes, weight drops, QA flags, and QR scans.</p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Automated notifications for microclimate spikes, weight drops, QA
+            flags, and QR scans.
+          </p>
         </div>
 
         {/* Severity Filter */}
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setFilterSeverity('ALL')}
+            onClick={() => setFilterSeverity("ALL")}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-              filterSeverity === 'ALL' ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-700'
+              filterSeverity === "ALL"
+                ? "bg-slate-900 text-white"
+                : "bg-white border border-slate-200 text-slate-700"
             }`}
           >
-            All Alerts ({alerts.length})
+            All Alerts ({visibleAlerts.length})
           </button>
+
           <button
-            onClick={() => setFilterSeverity('CRITICAL')}
+            onClick={() => setFilterSeverity("CRITICAL")}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-              filterSeverity === 'CRITICAL' ? 'bg-rose-600 text-white' : 'bg-white border border-slate-200 text-slate-700'
+              filterSeverity === "CRITICAL"
+                ? "bg-rose-600 text-white"
+                : "bg-white border border-slate-200 text-slate-700"
             }`}
           >
-            Critical ({alerts.filter(a => a.severity === 'CRITICAL').length})
+            Critical (
+            {visibleAlerts.filter((a) => a.severity === "CRITICAL").length})
           </button>
+
           <button
-            onClick={() => setFilterSeverity('WARNING')}
+            onClick={() => setFilterSeverity("WARNING")}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-              filterSeverity === 'WARNING' ? 'bg-amber-600 text-white' : 'bg-white border border-slate-200 text-slate-700'
+              filterSeverity === "WARNING"
+                ? "bg-amber-600 text-white"
+                : "bg-white border border-slate-200 text-slate-700"
             }`}
           >
-            Warning ({alerts.filter(a => a.severity === 'WARNING').length})
+            Warning (
+            {visibleAlerts.filter((a) => a.severity === "WARNING").length})
           </button>
         </div>
       </div>
@@ -58,18 +90,18 @@ export const AlertsPage = () => {
             <div
               key={alert.id}
               className={`p-5 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
-                alert.severity === 'CRITICAL' 
-                  ? 'bg-rose-50/70 border-rose-200' 
-                  : alert.severity === 'WARNING' 
-                    ? 'bg-amber-50/70 border-amber-200' 
-                    : 'bg-white border-slate-200'
+                alert.severity === "CRITICAL"
+                  ? "bg-rose-50/70 border-rose-200"
+                  : alert.severity === "WARNING"
+                    ? "bg-amber-50/70 border-amber-200"
+                    : "bg-white border-slate-200"
               }`}
             >
               <div className="flex items-start gap-4">
                 <div className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-xs shrink-0 mt-0.5">
-                  {alert.severity === 'CRITICAL' ? (
+                  {alert.severity === "CRITICAL" ? (
                     <ShieldAlert className="w-5 h-5 text-rose-600" />
-                  ) : alert.severity === 'WARNING' ? (
+                  ) : alert.severity === "WARNING" ? (
                     <AlertTriangle className="w-5 h-5 text-amber-600" />
                   ) : (
                     <Bell className="w-5 h-5 text-blue-600" />
@@ -78,11 +110,20 @@ export const AlertsPage = () => {
 
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-sm text-slate-900">{alert.title}</span>
+                    <span className="font-bold text-sm text-slate-900">
+                      {alert.title}
+                    </span>
+
                     <StatusBadge status={alert.severity} />
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">{alert.message}</p>
-                  <p className="text-[10px] font-mono text-slate-400 mt-1">{alert.timestamp}</p>
+
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    {alert.message}
+                  </p>
+
+                  <p className="text-[10px] font-mono text-slate-400 mt-1">
+                    {alert.timestamp}
+                  </p>
                 </div>
               </div>
 
@@ -92,9 +133,11 @@ export const AlertsPage = () => {
                     to={`/hives/${alert.hiveId}`}
                     className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1 transition-colors"
                   >
-                    Inspect Hive <ArrowRight className="w-3.5 h-3.5" />
+                    Inspect Hive
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 )}
+
                 <button
                   onClick={() => dismissAlert(alert.id)}
                   className="text-slate-400 hover:text-rose-600 p-2 rounded-lg hover:bg-white/80 transition-colors"
@@ -108,7 +151,11 @@ export const AlertsPage = () => {
         ) : (
           <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center">
             <p className="text-sm font-bold text-slate-900">No active alerts</p>
-            <p className="text-xs text-slate-500 mt-1">All monitored IoT nodes and batch quality parameters are operating normally.</p>
+
+            <p className="text-xs text-slate-500 mt-1">
+              All monitored IoT nodes and batch quality parameters are operating
+              normally.
+            </p>
           </div>
         )}
       </div>

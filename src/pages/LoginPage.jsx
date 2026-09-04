@@ -1,260 +1,257 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import {
-  ShieldCheck,
-  User,
-  Building2,
-  ShoppingBag,
-  KeyRound,
-  Lock,
-  AlertCircle,
-  CheckCircle,
-} from "lucide-react";
+import { User, Building2, ShoppingBag, Lock } from "lucide-react";
 
-export const LoginPage = () => {
+const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [role, setRole] = useState("beekeeper");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [resetSent, setResetSent] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const [govtId, setGovtId] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLoginSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    login(email, password, role);
+    setError("");
+
+    // ================================
+    // KVIC OFFICER LOGIN VALIDATION
+    // ================================
     if (role === "gov_officer") {
+      // Unique Government/KVIC Officer ID
+      const VALID_GOVT_ID = "KVIC-AP-GOV-001";
+
+      // Check Government ID
+      if (govtId.trim().toUpperCase() !== VALID_GOVT_ID) {
+        setError(
+          "Invalid KVIC Government ID. Only registered KVIC officers can access this portal.",
+        );
+        return;
+      }
+
+      // Check Email and Password
+      if (!email || !password) {
+        setError("Please enter your registered email and password.");
+        return;
+      }
+
+      // Login KVIC Officer
+      login({
+        role: "gov_officer",
+        name: "KVIC Officer",
+        email: email,
+        govtId: VALID_GOVT_ID,
+      });
+
       navigate("/gov-dashboard");
-    } else if (role === "buyer") {
-      navigate("/marketplace");
-    } else {
+      return;
+    }
+
+    // ================================
+    // BEEKEEPER LOGIN
+    // ================================
+    if (role === "beekeeper") {
+      if (!email || !password) {
+        setError("Please enter your email and password.");
+        return;
+      }
+
+      login({
+        role: "beekeeper",
+        name: "Registered Beekeeper",
+        email: email,
+      });
+
       navigate("/dashboard");
+      return;
+    }
+
+    // ================================
+    // BUYER LOGIN
+    // ================================
+    if (role === "buyer") {
+      if (!email || !password) {
+        setError("Please enter your email and password.");
+        return;
+      }
+
+      login({
+        role: "buyer",
+        name: "Honey Buyer",
+        email: email,
+      });
+
+      navigate("/marketplace");
     }
   };
 
-  const handleForgotSubmit = (e) => {
-    e.preventDefault();
-    setResetSent(true);
-  };
-
   return (
-    <div className="min-h-[85vh] bg-slate-100 flex items-center justify-center p-4 py-12">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        {/* Government Top Emblem Banner */}
-        <div className="bg-slate-950 text-white p-6 text-center border-b border-slate-800 relative">
-          <div className="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center mx-auto mb-3">
-            <ShieldCheck className="w-7 h-7" />
-          </div>
-          <p className="text-[10px] font-mono font-semibold uppercase text-amber-400 tracking-widest">
-            Government of India | KVIC
-          </p>
-          <h2 className="text-xl font-bold text-white mt-1">
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+        {/* HEADER */}
+        <div className="bg-slate-950 text-white text-center px-6 py-5">
+          <h1 className="text-xl font-bold">
             Honey Chain Portal Authentication
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          </h1>
+
+          <p className="text-sm text-slate-300 mt-1">
             National Honey Quality Traceability Network
           </p>
         </div>
 
-        {/* Role Selector Tabs */}
-        <div className="p-6">
-          <div className="mb-6">
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-              Select User Role:
-            </label>
-            <div className="grid grid-cols-3 gap-2 p-1 bg-slate-100 rounded-xl border border-slate-200">
-              <button
-                type="button"
-                onClick={() => {
-                  setRole("beekeeper");
-                  setEmail("ramesh.beekeeping@gov.in");
-                }}
-                className={`py-2 px-2 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 ${
-                  role === "beekeeper"
-                    ? "bg-amber-600 text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <User className="w-4 h-4" />
-                <span>Beekeeper</span>
-              </button>
+        <form onSubmit={handleLogin} className="p-6">
+          {/* ROLE */}
+          <label className="text-xs font-semibold text-slate-700">
+            SELECT USER ROLE:
+          </label>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setRole("gov_officer");
-                  setEmail("anand.sharma@kvic.gov.in");
-                }}
-                className={`py-2 px-2 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 ${
-                  role === "gov_officer"
-                    ? "bg-blue-600 text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <Building2 className="w-4 h-4" />
-                <span>KVIC Officer</span>
-              </button>
+          <div className="grid grid-cols-3 gap-2 bg-slate-100 p-1 rounded-xl mt-2 mb-5">
+            {/* BEEKEEPER */}
+            <button
+              type="button"
+              onClick={() => {
+                setRole("beekeeper");
+                setGovtId("");
+                setError("");
+              }}
+              className={`py-3 rounded-lg text-sm ${
+                role === "beekeeper"
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-700"
+              }`}
+            >
+              <User className="w-4 h-4 mx-auto mb-1" />
+              Beekeeper
+            </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setRole("buyer");
-                  setEmail("procurement@apexorganics.in");
-                }}
-                className={`py-2 px-2 rounded-lg text-xs font-bold transition-all flex flex-col items-center gap-1 ${
-                  role === "buyer"
-                    ? "bg-emerald-600 text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <ShoppingBag className="w-4 h-4" />
-                <span>Buyer</span>
-              </button>
-            </div>
+            {/* KVIC OFFICER */}
+            <button
+              type="button"
+              onClick={() => {
+                setRole("gov_officer");
+                setError("");
+              }}
+              className={`py-3 rounded-lg text-sm ${
+                role === "gov_officer"
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-700"
+              }`}
+            >
+              <Building2 className="w-4 h-4 mx-auto mb-1" />
+              KVIC Officer
+            </button>
+
+            {/* BUYER */}
+            <button
+              type="button"
+              onClick={() => {
+                setRole("buyer");
+                setGovtId("");
+                setError("");
+              }}
+              className={`py-3 rounded-lg text-sm ${
+                role === "buyer" ? "bg-blue-600 text-white" : "text-slate-700"
+              }`}
+            >
+              <ShoppingBag className="w-4 h-4 mx-auto mb-1" />
+              Buyer
+            </button>
           </div>
 
-          {!showForgotPassword ? (
-            <form onSubmit={handleLoginSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Registered Email or Mobile Number
-                </label>
+          {/* GOVERNMENT ID - ONLY FOR KVIC OFFICER */}
+          {role === "gov_officer" && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Government / KVIC ID
+              </label>
+
+              <div className="relative">
+                <Lock className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" />
+
                 <input
                   type="text"
+                  value={govtId}
+                  onChange={(e) => setGovtId(e.target.value.toUpperCase())}
+                  placeholder="Enter KVIC Government ID"
+                  className="w-full border border-slate-300 rounded-lg py-3 pl-10 pr-3 outline-none focus:ring-2 focus:ring-blue-500"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={
-                    role === "beekeeper" ? "" : role === "gov_officer" ? "" : ""
-                  }
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-700">
-                    Password
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowForgotPassword(true)}
-                    className="text-xs font-semibold text-amber-700 hover:underline"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
-                <input
-                  type="password"
-                  required
-                  value={password || ""}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              {/* Security Captcha Notice */}
-              <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-[11px] text-amber-900 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-amber-600 shrink-0" />
-                <span>
-                  Government Authorized Portal. All login sessions are
-                  cryptographically logged for audit compliance.
-                </span>
-              </div>
-
-              <button
-                type="submit"
-                className={`w-full py-3 px-4 rounded-xl font-bold text-white text-sm shadow-md transition-all ${
-                  role === "gov_officer"
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : role === "buyer"
-                      ? "bg-emerald-600 hover:bg-emerald-700"
-                      : "bg-amber-600 hover:bg-amber-700"
-                }`}
-              >
-                Sign In to{" "}
-                {role === "gov_officer"
-                  ? "KVIC Portal"
-                  : role === "buyer"
-                    ? "Procurement Desk"
-                    : "Beekeeper Dashboard"}
-              </button>
-            </form>
-          ) : (
-            /* Forgot Password Box */
-            <div className="space-y-4">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-amber-600" />
-                Reset Portal Credentials
-              </h3>
-              {!resetSent ? (
-                <form onSubmit={handleForgotSubmit} className="space-y-3">
-                  <p className="text-xs text-slate-600">
-                    Enter your registered email address or mobile number to
-                    receive a secure OTP code.
-                  </p>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter email or mobile..."
-                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm"
-                  />
-                  <div className="flex gap-2 pt-2">
-                    <button
-                      type="submit"
-                      className="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg text-xs"
-                    >
-                      Send Reset OTP
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setShowForgotPassword(false)}
-                      className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-4 py-2 rounded-lg text-xs"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-900 text-xs text-center space-y-2">
-                  <CheckCircle className="w-6 h-6 text-emerald-600 mx-auto" />
-                  <p className="font-bold">Password Reset Instructions Sent!</p>
-                  <p className="text-[11px] text-emerald-700">
-                    Please check your registered email / SMS for further
-                    instructions.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setShowForgotPassword(false);
-                      setResetSent(false);
-                    }}
-                    className="mt-2 text-xs font-bold text-emerald-800 hover:underline"
-                  >
-                    Return to Login
-                  </button>
-                </div>
-              )}
+              <p className="text-xs text-slate-500 mt-1">
+                Authorized KVIC personnel only
+              </p>
             </div>
           )}
 
-          <p className="text-center text-sm text-slate-600 mt-6">
-            Don&apos;t have an account?{" "}
-            <Link
-              to="/signup"
-              className="font-bold text-amber-700 hover:underline"
-            >
-              Sign up
-            </Link>
-          </p>
-        </div>
+          {/* EMAIL */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Registered Email or Mobile Number
+            </label>
 
-        {/* Footer info */}
-        <div className="bg-slate-50 px-6 py-3 border-t border-slate-200 text-center text-xs text-slate-500">
-          Need assistance? Contact KVIC Helpline: <strong>1800-11-KVIC</strong>
+            <input
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter registered email"
+              className="w-full border border-slate-300 rounded-lg py-3 px-3 outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          {/* PASSWORD */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Password
+            </label>
+
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="w-full border border-slate-300 rounded-lg py-3 px-3 outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          {/* ERROR */}
+          {error && (
+            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* SECURITY MESSAGE */}
+          {role === "gov_officer" && (
+            <div className="mb-5 p-3 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-800">
+              🔒 Government Authorized Portal. Access is restricted to
+              registered KVIC personnel.
+            </div>
+          )}
+
+          {/* LOGIN */}
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition"
+          >
+            {role === "gov_officer" ? "Sign In to KVIC Portal" : "Sign In"}
+          </button>
+        </form>
+
+        {/* FOOTER */}
+        <div className="border-t bg-slate-50 text-center py-4 text-xs text-slate-500">
+          Need assistance? Contact KVIC Helpline:{" "}
+          <span className="font-semibold">1800-11-KVIC</span>
         </div>
       </div>
     </div>
   );
 };
+
+export { LoginPage };
+export default LoginPage;

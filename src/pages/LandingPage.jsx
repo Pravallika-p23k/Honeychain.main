@@ -92,7 +92,6 @@ export const LandingPage = () => {
                 Access Portal Login
                 <ArrowRight className="w-5 h-5" />
               </Link>
-<<<<<<< HEAD
               <Link
                 to="/signup"
                 className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-3.5 rounded-xl border border-slate-700 transition-all flex items-center gap-2 text-base"
@@ -100,11 +99,9 @@ export const LandingPage = () => {
                 <UserPlus className="w-5 h-5 text-amber-400" />
                 Sign Up
               </Link>
-=======
->>>>>>> 87c4876f9f7f45a51f795ce87f2bda85db3dcbba
             </div>
 
-           
+         
           </div>
         </div>
       </section>

@@ -1,38 +1,40 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import {
-  LayoutDashboard,
-  Box,
-  Cpu,
-  Sparkles,
-  Sprout,
-  Layers,
-  Database,
-  ShoppingBag,
-  Bell,
-  User,
-  Building2,
-  Users,
-  ShieldCheck,
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { 
+  LayoutDashboard, 
+  Box, 
+  Cpu, 
+  Sparkles, 
+  Sprout, 
+  Layers, 
+  Database, 
+  ShoppingBag, 
+  Bell, 
+  User, 
+  Building2, 
+  Users, 
+  ShieldCheck, 
   ChevronRight,
   FileCheck,
   Award,
-} from "lucide-react";
+  QrCode
+} from 'lucide-react';
 
 export const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
   const { user } = useAuth();
 
   const BEEKEEPER_NAV = [
-    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { name: "My Hives", path: "/hives", icon: Box },
-    { name: "IoT Hive Monitoring", path: "/iot", icon: Cpu },
-    { name: "AI Insights", path: "/ai-insights", icon: Sparkles },
-    { name: "Harvest Honey", path: "/harvest", icon: Sprout },
-    { name: "Honey Batches", path: "/batches", icon: Layers },
-    { name: "Marketplace", path: "/marketplace", icon: ShoppingBag },
-    { name: "Alerts", path: "/alerts", icon: Bell },
-    { name: "Profile", path: "/profile", icon: User },
+    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'My Hives', path: '/hives', icon: Box },
+    { name: 'IoT Hive Monitoring', path: '/iot', icon: Cpu },
+    { name: 'AI Insights', path: '/ai-insights', icon: Sparkles },
+    { name: 'Harvest Honey', path: '/harvest', icon: Sprout },
+    { name: 'Honey Batches', path: '/batches', icon: Layers },
+
+    { name: 'Marketplace', path: '/marketplace', icon: ShoppingBag },
+    { name: 'Alerts', path: '/alerts', icon: Bell },
+    { name: 'Profile', path: '/profile', icon: User },
   ];
 
   const GOV_NAV = [
@@ -44,24 +46,32 @@ export const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
     { name: "All Honey Batches", path: "/batches", icon: Layers },
     { name: "Blockchain Records", path: "/blockchain", icon: Database },
     { name: "Marketplace Listings", path: "/marketplace", icon: ShoppingBag },
-    { name: "Quality Alerts", path: "/alerts", icon: Bell },
     { name: "Official Profile", path: "/profile", icon: User },
   ];
 
-  const BUYER_NAV = [
-    { name: "Procurement Market", path: "/marketplace", icon: ShoppingBag },
-    { name: "Batch Verification", path: "/verify", icon: ShieldCheck },
-    { name: "Blockchain Ledger", path: "/blockchain", icon: Database },
-    { name: "System Alerts", path: "/alerts", icon: Bell },
-    { name: "Company Profile", path: "/profile", icon: User },
-  ];
+const BUYER_NAV = [
+  {
+    name: "Scan Honey QR",
+    path: "/buyer-qr",
+    icon: QrCode,
+  },
+ 
+  {
+    name: "Batch Verification",
+    path: "/verify",
+    icon: ShieldCheck,
+  },
+  {
+    name: "Company Profile",
+    path: "/profile",
+    icon: User,
+  },
+];
+  const navItems = user.role === 'gov_officer' ? GOV_NAV : user.role === 'buyer' ? BUYER_NAV : BEEKEEPER_NAV;
+  
+  
 
-  const navItems =
-    user.role === "gov_officer"
-      ? GOV_NAV
-      : user.role === "buyer"
-        ? BUYER_NAV
-        : BEEKEEPER_NAV;
+  console.log("CURRENT USER:", user);
 
   return (
     <>
@@ -96,16 +106,13 @@ export const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
                   <Box className="w-5 h-5" />
                 )}
               </div>
-
               <div>
                 <p className="text-xs font-mono text-amber-400 font-semibold uppercase tracking-wider">
                   {user.role.replace("_", " ")}
                 </p>
-
                 <p className="text-xs font-bold text-white truncate max-w-[130px]">
                   {user.name}
                 </p>
-
                 <p className="text-[10px] text-slate-400 truncate max-w-[130px]">
                   {user.cluster || user.department || user.company}
                 </p>
@@ -118,10 +125,8 @@ export const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
             <p className="px-3 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider mb-2">
               Main Menu
             </p>
-
             {navItems.map((item) => {
               const Icon = item.icon;
-
               return (
                 <NavLink
                   key={item.path}
@@ -140,7 +145,6 @@ export const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
                     <Icon className="w-4 h-4" />
                     <span>{item.name}</span>
                   </div>
-
                   <ChevronRight className="w-3.5 h-3.5 opacity-60" />
                 </NavLink>
               );

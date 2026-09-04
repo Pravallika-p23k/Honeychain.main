@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import BuyerQRPage from "./pages/BuyerQRPage";
+import HoneyTrackingPage from "./pages/HoneyTrackingPage";
 import {
   BrowserRouter as Router,
   Routes,
@@ -82,6 +84,8 @@ function AppLayout() {
               />
               <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/buyer-qr" element={<BuyerQRPage />} />
+              <Route path="/track/:batchId" element={<HoneyTrackingPage />} />
             </Routes>
           </main>
         </div>
