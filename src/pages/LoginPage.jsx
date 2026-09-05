@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { User, Building2, ShoppingBag, Lock } from "lucide-react";
+import { User, Building2, ShoppingBag, FlaskConical, Lock } from "lucide-react";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -21,10 +21,8 @@ const LoginPage = () => {
     // KVIC OFFICER LOGIN VALIDATION
     // ================================
     if (role === "gov_officer") {
-      // Unique Government/KVIC Officer ID
       const VALID_GOVT_ID = "KVIC-AP-GOV-001";
 
-      // Check Government ID
       if (govtId.trim().toUpperCase() !== VALID_GOVT_ID) {
         setError(
           "Invalid KVIC Government ID. Only registered KVIC officers can access this portal.",
@@ -32,13 +30,11 @@ const LoginPage = () => {
         return;
       }
 
-      // Check Email and Password
       if (!email || !password) {
         setError("Please enter your registered email and password.");
         return;
       }
 
-      // Login KVIC Officer
       login({
         role: "gov_officer",
         name: "KVIC Officer",
@@ -85,6 +81,27 @@ const LoginPage = () => {
       });
 
       navigate("/marketplace");
+      return;
+    }
+
+    // ================================
+    // LAB OFFICER LOGIN
+    // ================================
+    if (role === "lab_officer") {
+      if (!email || !password) {
+        setError("Please enter your email and password.");
+        return;
+      }
+
+      login({
+        role: "lab_officer",
+        name: "Honey Testing Lab Officer",
+        email: email,
+        laboratoryId: "LAB-AP-001",
+      });
+
+      navigate("/lab-dashboard");
+      return;
     }
   };
 
@@ -108,7 +125,7 @@ const LoginPage = () => {
             SELECT USER ROLE:
           </label>
 
-          <div className="grid grid-cols-3 gap-2 bg-slate-100 p-1 rounded-xl mt-2 mb-5">
+          <div className="grid grid-cols-4 gap-2 bg-slate-100 p-1 rounded-xl mt-2 mb-5">
             {/* BEEKEEPER */}
             <button
               type="button"
@@ -158,6 +175,24 @@ const LoginPage = () => {
             >
               <ShoppingBag className="w-4 h-4 mx-auto mb-1" />
               Buyer
+            </button>
+
+            {/* LAB OFFICER */}
+            <button
+              type="button"
+              onClick={() => {
+                setRole("lab_officer");
+                setGovtId("");
+                setError("");
+              }}
+              className={`py-3 rounded-lg text-sm ${
+                role === "lab_officer"
+                  ? "bg-blue-600 text-white"
+                  : "text-slate-700"
+              }`}
+            >
+              <FlaskConical className="w-4 h-4 mx-auto mb-1" />
+              Lab Officer
             </button>
           </div>
 
@@ -226,11 +261,19 @@ const LoginPage = () => {
             </div>
           )}
 
-          {/* SECURITY MESSAGE */}
+          {/* KVIC SECURITY MESSAGE */}
           {role === "gov_officer" && (
             <div className="mb-5 p-3 rounded-lg bg-amber-50 border border-amber-300 text-xs text-amber-800">
               🔒 Government Authorized Portal. Access is restricted to
               registered KVIC personnel.
+            </div>
+          )}
+
+          {/* LAB OFFICER MESSAGE */}
+          {role === "lab_officer" && (
+            <div className="mb-5 p-3 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-800">
+              🧪 Authorized Lab Officer Portal. Lab officers can monitor honey
+              quality testing and submit verified test reports.
             </div>
           )}
 
@@ -239,7 +282,11 @@ const LoginPage = () => {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition"
           >
-            {role === "gov_officer" ? "Sign In to KVIC Portal" : "Sign In"}
+            {role === "gov_officer"
+              ? "Sign In to KVIC Portal"
+              : role === "lab_officer"
+                ? "Sign In as Lab Officer"
+                : "Sign In"}
           </button>
         </form>
 

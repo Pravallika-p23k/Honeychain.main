@@ -17,6 +17,12 @@ const MOCK_USERS = {
     phone: "+91 98765 43210",
     avatar: profileImage,
   },
+  lab_officer: {
+    role: "lab_officer",
+    name: "Honey Testing Laboratory",
+    email: "lab@honeychain.gov.in",
+    laboratoryId: "LAB-AP-001",
+  },
 
   gov_officer: {
     id: "KVIC-GOV-904",

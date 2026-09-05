@@ -1,25 +1,27 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
-  LayoutDashboard, 
-  Box, 
-  Cpu, 
-  Sparkles, 
-  Sprout, 
-  Layers, 
-  Database, 
-  ShoppingBag, 
-  Bell, 
-  User, 
-  Building2, 
-  Users, 
-  ShieldCheck, 
+import {
+  LayoutDashboard,
+  Box,
+  Cpu,
+  Sparkles,
+  Sprout,
+  Layers,
+  Database,
+  ShoppingBag,
+  Bell,
+  User,
+  Building2,
+  Users,
+  ShieldCheck,
   ChevronRight,
   FileCheck,
   Award,
-  QrCode
-} from 'lucide-react';
+  QrCode,
+  FlaskConical,
+  ClipboardCheck
+} from "lucide-react";
 
 export const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
   const { user } = useAuth();
@@ -36,6 +38,23 @@ export const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
     { name: 'Alerts', path: '/alerts', icon: Bell },
     { name: 'Profile', path: '/profile', icon: User },
   ];
+  const LAB_NAV = [
+    {
+      name: "Laboratory Dashboard",
+      path: "/lab-dashboard",
+      icon: FlaskConical,
+    },
+    {
+      name: "Honey Testing",
+      path: "/lab-testing",
+      icon: ClipboardCheck,
+    },
+    {
+      name: "Company Profile",
+      path: "/profile",
+      icon: User,
+    },
+  ];
 
   const GOV_NAV = [
     { name: "Government Dashboard", path: "/gov-dashboard", icon: Building2 },
@@ -50,26 +69,19 @@ export const Sidebar = ({ isMobileOpen, closeMobileSidebar }) => {
   ];
 
 const BUYER_NAV = [
-  {
-    name: "Scan Honey QR",
-    path: "/buyer-qr",
-    icon: QrCode,
-  },
- 
-  {
-    name: "Batch Verification",
-    path: "/verify",
-    icon: ShieldCheck,
-  },
-  {
-    name: "Company Profile",
-    path: "/profile",
-    icon: User,
-  },
+  { name: "Scan Honey QR", path: "/buyer-qr", icon: QrCode },
+  { name: "Batch Verification", path: "/verify", icon: ShieldCheck },
+  { name: "Marketplace", path: "/marketplace", icon: ShoppingBag },
+  { name: "Company Profile", path: "/profile", icon: User },
 ];
-  const navItems = user.role === 'gov_officer' ? GOV_NAV : user.role === 'buyer' ? BUYER_NAV : BEEKEEPER_NAV;
-  
-  
+  const navItems =
+    user.role === "gov_officer"
+      ? GOV_NAV
+      : user.role === "buyer"
+        ? BUYER_NAV
+        : user.role === "lab_officer"
+          ? LAB_NAV
+          : BEEKEEPER_NAV;
 
   console.log("CURRENT USER:", user);
 

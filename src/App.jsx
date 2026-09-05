@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import BuyerQRPage from "./pages/BuyerQRPage";
 import HoneyTrackingPage from "./pages/HoneyTrackingPage";
+import LabDashboardPage from "./pages/LabDashboardPage";
+import LabTestingPage from "./pages/LabTestingPage";
 import {
   BrowserRouter as Router,
   Routes,
@@ -86,6 +88,9 @@ function AppLayout() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/buyer-qr" element={<BuyerQRPage />} />
               <Route path="/track/:batchId" element={<HoneyTrackingPage />} />
+              <Route path="/lab-dashboard" element={<LabDashboardPage />} />
+
+              <Route path="/lab-testing" element={<LabTestingPage />} />
             </Routes>
           </main>
         </div>
