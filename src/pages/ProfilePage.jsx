@@ -402,4 +402,5 @@ const StatusRow = ({ title, status }) => {
   );
 };
 
+export { ProfilePage };
 export default ProfilePage;
