@@ -74,18 +74,7 @@ export const SignupPage = () => {
                   placeholder="Enter email or mobile number"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Account Type
-                </label>
-                <select
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  defaultValue="beekeeper"
-                >
-                  <option value="beekeeper">Beekeeper</option>
-                  <option value="buyer">Buyer</option>
-                </select>
-              </div>
+             
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   Create Password
